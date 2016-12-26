@@ -33,8 +33,12 @@ form {
 .act {
   position: relative;
   display: table-cell;
-  width: 33%;
   height: 100%;
+  width: 25%;
+}
+
+.act2 {
+  width: 50%;
 }
 
 .act + .act {
@@ -96,18 +100,18 @@ form {
 
 #containment_act1 {
   left: 0;
-  width: 33%;
+  width: 25%;
 }
 
 #containment_act3 {
   right: 0;
-  width: 33%;
+  width: 25%;
 }
 
 #containment_pp1,
 #containment_pp2,
 #containment_cp {
-  width:60px;
+  width:66px;
 }
 
 table {

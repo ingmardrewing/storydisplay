@@ -6,8 +6,8 @@ jQuery(function(){
           return [
             { id:"inciting_incident", name:"Inciting Incident", x:'10%', containment: '#containment_act1'},
             { id:"resolve", name:"Resolve", x:'90%', containment: '#containment_act3'},
-            { id:"plot_point_1", name:"Plot Point 1", x:'32%', containment: '#containment_pp1'},
-            { id:"plot_point_2", name:"Plot Point 2", x:'64%', containment: '#containment_pp2'},
+            { id:"plot_point_1", name:"Plot Point 1", x:'25%', containment: '#containment_pp1'},
+            { id:"plot_point_2", name:"Plot Point 2", x:'75%', containment: '#containment_pp2'},
             { id:"central_point", name:"Central Point", x:'50%', containment: '#containment_cp'}
           ];
         }
@@ -159,11 +159,10 @@ jQuery(function(){
           ctx.canvas.height = $('#background').height();
 
           var w = $(window).width(),
-              center = w / 2,
-              oneThird = w / 3;
-          $('#containment_cp' ).css({ left: ( center - 30 ) + 'px' }),
-          $('#containment_pp1').css({ left: ( oneThird - 30 ) + 'px' });
-          $('#containment_pp2').css({ left: ( 2 * oneThird - 30 ) + 'px' });
+              quarter = w / 4;
+          $('#containment_cp' ).css({ left: ( 2* quarter - 33 ) + 'px' }),
+          $('#containment_pp1').css({ left: ( quarter - 33    ) + 'px' });
+          $('#containment_pp2').css({ left: ( 3 * quarter - 33 ) + 'px' });
         }
 
         function save_scene_description(){
