@@ -32,10 +32,11 @@ jQuery(function(){
           var $s = create_scene_div( conf.x, conf.y, conf.id, conf.containment );
           scenes.push({
             $node: $s,
-            name: conf.name,
+            name: conf.name || '',
             x: conf.x,
             y: conf.y,
             id: conf.id,
+            description: conf.description || '',
             containment: conf.containment
           });
           $('#scenes').append($s);
