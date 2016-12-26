@@ -158,10 +158,9 @@ jQuery(function(){
           ctx.canvas.width = $('#background').width();
           ctx.canvas.height = $('#background').height();
 
-          var w = $(window).width(),
-              quarter = w / 4;
-          $('#containment_cp' ).css({ left: ( 2* quarter - 33 ) + 'px' }),
-          $('#containment_pp1').css({ left: ( quarter - 33    ) + 'px' });
+          var quarter = $(window).width() / 4;
+          $('#containment_pp1').css({ left: (     quarter - 33 ) + 'px' });
+          $('#containment_cp' ).css({ left: ( 2 * quarter - 33 ) + 'px' }),
           $('#containment_pp2').css({ left: ( 3 * quarter - 33 ) + 'px' });
         }
 
