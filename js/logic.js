@@ -9,15 +9,15 @@ jQuery(function(){
 
         var scenes = [];
 
-        $('#scenes').click(function(e){
-          if( $(e.target).attr('id') != 'scenes' ){
-            return;
+        $('#scenes').mousedown(function(e){
+          if( $(e.target).attr('id') == 'scenes' 
+              && $(e.currentTarget).attr('id') == 'scenes'){
+            var conf = get_scene_conf(e);
+            var $s = create_scene(conf);
+            update_scene( $s );
+            update_text_display( {target:$s} );
+            update_canvas();
           }
-          var conf = get_scene_conf(e);
-          var $s = create_scene(conf);
-          update_scene( $s );
-          update_text_display( {target:$s} );
-          update_canvas();
         });
 
         function get_scene_conf(e){
@@ -137,8 +137,7 @@ jQuery(function(){
           }
           var scene_data = get_scenedata_by_id( id );
           $("#text #scene_type")
-            .empty() 
-            .append( scene_data.name ); 
+            .val( scene_data.name || '' );
           $("#text #scene_id")
             .val(id);
           $("#text #scene_description")
