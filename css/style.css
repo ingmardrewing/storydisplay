@@ -61,6 +61,41 @@ form {
   user-select: none;
 }
 
+#positive .act1::before {
+  color: lightgrey;
+  position: absolute;
+  content: attr(data-y-axis);
+  display: block;
+  font-size: 1vw;
+  line-height: 1;
+  bottom: 25%;
+  right: -8%;
+  transform: rotate(-90deg);
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+}
+
+#positive .act2::before {
+  color: lightgrey;
+  position: absolute;
+  content: attr(data-x-axis);
+  display: block;
+  font-size: 1vw;
+  line-height: 1;
+  bottom: 2%;
+  left: 2%;
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+}
+
+
+
 #positive, #negative {
   height:  50% ;
   min-width: 100%;
