@@ -277,7 +277,7 @@ jQuery(function(){
             }
           });
 
-          $('#read').click(function(e){
+          $('#reconstruct').click(function(e){
             delete_scenes();
             keyscenes = get_keyscenes();
             scenes =  JSON.parse( $('#text #model').val()  );
