@@ -1,13 +1,16 @@
 jQuery(function(){
-        var keyscenes = [
+        var scenes = [];
+        var keyscenes = get_keyscenes();
+
+        function get_keyscenes (){
+          return [
             { id:"inciting_incident", name:"Inciting Incident", x:'10%', containment: '#containment_act1'},
             { id:"resolve", name:"Resolve", x:'90%', containment: '#containment_act3'},
             { id:"plot_point_1", name:"Plot Point 1", x:'32%', containment: '#containment_pp1'},
             { id:"plot_point_2", name:"Plot Point 2", x:'64%', containment: '#containment_pp2'},
             { id:"central_point", name:"Central Point", x:'50%', containment: '#containment_cp'}
-        ];
-
-        var scenes = [];
+          ];
+        }
 
         function get_scene_config(e){
           if( keyscenes.length > 0 ){
@@ -32,7 +35,10 @@ jQuery(function(){
           scenes.push({
             $node: $s,
             name: conf.name,
-            id: conf.id
+            x: conf.x,
+            y: conf.y,
+            id: conf.id,
+            containment: conf.containment
           });
           $('#scenes').append($s);
           return $s;
@@ -67,6 +73,9 @@ jQuery(function(){
         }
 
         function update_canvas () {
+          var canvas = document.getElementById('canv'),
+              ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (document.getElementById('canv').getContext && scenes.length > 1  ) {
             scenes.sort( function(a, b){
               var a_pos = get_coords ( a.$node ),
@@ -79,7 +88,19 @@ jQuery(function(){
               }
               return 0;
             });
-            draw_connecting_lines();
+            ctx.beginPath();
+            for (var i=0; i< scenes.length; i++){
+              var coords = get_coords(scenes[i].$node);
+              if( i == 0 ) {
+                ctx.moveTo( coords.x, coords.y );
+              }
+              else {
+                ctx.lineTo( coords.x, coords.y );
+              }
+            }
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#999999';
+            ctx.stroke();
           }
         }
 
@@ -104,24 +125,7 @@ jQuery(function(){
           });
         }
 
-        function draw_connecting_lines () {
-          var canvas = document.getElementById('canv'),
-              ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
-          ctx.beginPath();
-          for (var i=0; i< scenes.length; i++){
-            var coords = get_coords(scenes[i].$node);
-            if( i == 0 ) {
-              ctx.moveTo( coords.x, coords.y );
-            }
-            else {
-              ctx.lineTo( coords.x, coords.y );
-            }
-          }
-          ctx.lineWidth = 5;
-          ctx.strokeStyle = '#999999';
-          ctx.stroke();
-        }
+        
 
         function update_text_display( e ){
           var id;  
@@ -181,20 +185,7 @@ jQuery(function(){
 
         function update_model_display(){
           convert_scene_positions_to_percentage();
-          $('#text #model').val('');
-          var txt = '';
-          function addTxt(n, t){ 
-            return n + ': '+ t + "\n";
-          }
-          for (var i=0; i< scenes.length; i++){
-            txt += addTxt( 'Name', scenes[i].name || '' );
-            txt += addTxt( 'Description', scenes[i].description || '' );
-            txt += addTxt( 'x', scenes[i].x || '' );
-            txt += addTxt( 'y', scenes[i].y || '' );
-            txt += "\n";
-          }
-          console.log( txt );
-          $('#text #model').val( txt );
+          $('#text #model').val( serialize_scenes_data() );
         }
 
         function percent(part, whole){
@@ -230,7 +221,40 @@ jQuery(function(){
           });
         }
 
+        function serialize_scenes_data(){
+          var s = []
+          $.each(scenes, function(i,v){
+            s.push(serialize_single_scene_data( v ) );
+          });
+          return '['+ s.join(',') +']';
+        }
+
+        function serialize_single_scene_data( data ){
+          var fields = [];
+          fields.push( add_serialized_field( 'name', data.name || '' ) );
+          fields.push( add_serialized_field( 'id', data.id || '') );
+          fields.push( add_serialized_field( 'containment', data.containment || '') );
+          fields.push( add_serialized_field( 'description', data.description || '' ) );
+          fields.push( add_serialized_field( 'x', data.x || '') );
+          fields.push( add_serialized_field( 'y', data.y || '') );
+         return '{' + fields.join(',') + '}';
+        }
+
+        function add_serialized_field( name, value ){
+          return '"' + name + '":"' + value.split('"').join('\"') + '"';
+        }
+
+        function delete_scenes(){
+          console.log('delete_scenes', scenes);
+          $.each(scenes, function(i,v){
+            v.$node.remove();
+          });
+          scenes = [];
+          update_canvas();
+        }
+
         function init(){
+          
           $(window).resize( function(){
             convert_scene_positions_to_percentage();
             adapt_size();
@@ -251,6 +275,21 @@ jQuery(function(){
               update_canvas();
               update_model_display();
             }
+          });
+
+          $('#read').click(function(e){
+            delete_scenes();
+            keyscenes = get_keyscenes();
+            scenes =  JSON.parse( $('#text #model').val()  );
+            $.each(scenes, function(i,v){
+              keyscenes.shift();
+              v.x = px( v.x, $('#scenes').width() );
+              v.y = px( v.y, $('#scenes').height() );
+              var $s = create_scene( v );
+              v.$node = $s;
+              update_arrow( $s );
+            });
+            update_canvas();
           });
 
           adapt_size();
