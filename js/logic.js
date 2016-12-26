@@ -1,5 +1,5 @@
 jQuery(function(){
-        var keyscene_names = [
+        var keyscenes = [
             { id:"inciting_incident", name:"Inciting Incident", x:'10%', containment: '#containment_act1'},
             { id:"resolve", name:"Resolve", x:'90%', containment: '#containment_act3'},
             { id:"plot_point_1", name:"Plot Point 1", x:'33%', containment: '#containment_pp1'},
@@ -12,17 +12,19 @@ jQuery(function(){
         $('#scenes').mousedown(function(e){
           if( $(e.target).attr('id') == 'scenes' 
               && $(e.currentTarget).attr('id') == 'scenes'){
-            var conf = get_scene_conf(e);
-            var $s = create_scene(conf);
+            var conf = get_scene_conf(e),
+                $s = create_scene(conf);
+            set_active( $s );
             update_scene( $s );
             update_text_display( {target:$s} );
             update_canvas();
+            update_model_display();
           }
         });
 
         function get_scene_conf(e){
-          if( keyscene_names.length > 0 ){
-             var conf = keyscene_names.shift();
+          if( keyscenes.length > 0 ){
+             var conf = keyscenes.shift();
              conf.y = e.pageY;
              return conf;
           }
@@ -62,7 +64,10 @@ jQuery(function(){
               drag: on_drag,
               stop: on_drag
             })
-            .click( update_text_display )
+            .click(function(e){
+              update_text_display(e);
+              set_active( $(this) );
+            })
             .append( get_svg_arrow() );
         }
 
@@ -73,53 +78,53 @@ jQuery(function(){
 
         function update_canvas () {
           if (document.getElementById('canv').getContext && scenes.length > 1  ) {
-            var coords = [];
-            for (var i=0; i< scenes.length; i++){
-              coords.push({
-                x: Math.floor( scenes[i].$node.position().left 
-                             + scenes[i].$node.width() / 2 ),
-                y: Math.floor( scenes[i].$node.position().top 
-                             + scenes[i].$node.height() / 2 )
-              });
-            }
-            coords.sort( function(a, b){
-              if( a.x > b.x ){ 
-                return -1 ;
-              }
-              else if( a.x < b.x ){ 
+            scenes.sort( function(a, b){
+              var a_pos = get_coords ( a.$node ),
+                  b_pos = get_coords ( b.$node ); 
+              if( a_pos.x > b_pos.x ){ 
                 return 1 ;
+              }
+              else if( a_pos.x < b_pos.x ){ 
+                return -1 ;
               }
               return 0;
             });
-            draw_connecting_lines( coords );
+            draw_connecting_lines();
           }
         }
 
+        function get_coords( $node ){
+          var x = Math.floor( $node.position().left + $node.width() / 2 ) ,
+              y = Math.floor( $node.position().top + $node.height() / 2 ) ;
+          return {x: x, y: y};
+        }
+
         function update_scene ( $scene ){
-          var scene_y = $scene.position().top;
-          var scale = scene_y / $('#scenes').height() ;
-          var sat = Math.abs( Math.floor ( (scale - 0.5) * 100) );
-          var hue = 'hsl(' + (120 -( 120 * scale )) + ', 100%, 50%)' ;
-          var degrees = 60 - Math.floor(120 - (120 * scale)) ;
-          var rot = 'rotate(' + degrees + 'deg)';
-          var svg = $scene.find('svg');
+          var scene_y = $scene.position().top,
+              scale = scene_y / $('#scenes').height(),
+              sat = Math.abs( Math.floor ( (scale - 0.5) * 100) ),
+              hue = 'hsl(' + (120 -( 120 * scale )) + ', 100%, 50%)',
+              degrees = 60 - Math.floor(120 - (120 * scale)),
+              rot = 'rotate(' + degrees + 'deg)',
+              svg = $scene.find('svg');
           svg.css({
             fill: hue,
             transform: rot
           });
         }
 
-        function draw_connecting_lines (coords) {
-          var canvas = document.getElementById('canv');
-          var ctx = canvas.getContext('2d');
+        function draw_connecting_lines () {
+          var canvas = document.getElementById('canv'),
+              ctx = canvas.getContext('2d');
           ctx.clearRect(0, 0, canvas.width, canvas.height)
           ctx.beginPath();
-          for (var i=0; i< coords.length; i++){
+          for (var i=0; i< scenes.length; i++){
+            var coords = get_coords(scenes[i].$node);
             if( i == 0 ) {
-              ctx.moveTo( coords[i].x, coords[i].y );
+              ctx.moveTo( coords.x, coords.y );
             }
             else {
-              ctx.lineTo( coords[i].x, coords[i].y );
+              ctx.lineTo( coords.x, coords.y );
             }
           }
           ctx.lineWidth = 5;
@@ -159,15 +164,15 @@ jQuery(function(){
         }
 
         function adapt_size(){
-          var canvas = document.getElementById('canv');
-          var ctx = canvas.getContext('2d');
+          var canvas = document.getElementById('canv'),
+              ctx = canvas.getContext('2d');
           ctx.canvas.width = $('#background').width();
           ctx.canvas.height = $('#background').height();
 
           // containments
-          var w = $(window).width();
-          var center = w / 2;
-          var oneThird = w / 3;
+          var w = $(window).width(),
+              center = w / 2,
+              oneThird = w / 3;
           $('#containment_cp' ).css({ left: ( center - 30 ) + 'px' }),
           $('#containment_pp1').css({ left: ( oneThird - 30 ) + 'px' });
           $('#containment_pp2').css({ left: ( 2 * oneThird - 30 ) + 'px' });
@@ -184,6 +189,22 @@ jQuery(function(){
         function save_scene_description(){
           var scene_id = $('#text #scene_id').val();
           get_scenedata_by_id( scene_id ).description = $(this).val();
+          update_model_display();
+        }
+
+        function update_model_display(){
+          $('#text #model').val('');
+          var txt = '';
+          function addTxt(n, t){ 
+            return n + ': '+ t + "\n";
+          }
+          for (var i=0; i< scenes.length; i++){
+            txt += addTxt( 'Name', scenes[i].name || '' );
+            txt += addTxt( 'Description', scenes[i].description || '' );
+            txt += "\n";
+          }
+          console.log( txt );
+          $('#text #model').val( txt );
         }
 
         adapt_size();
@@ -192,6 +213,10 @@ jQuery(function(){
           return ( part / whole ) * 100 ;
         }
 
-
-
+        function set_active( $s ){
+          for ( var i=0; i < scenes.length; i++ ){
+            scenes[i].$node.removeClass('active');
+          }
+          $(this).addClass('active');
+        }
   });

@@ -9,7 +9,7 @@ form {
 }
 
 #scene_type, input, textarea {
-  width: 50%;
+  width: 80%;
   margin-top: 20px;
   margin-left: 20px;
 }
@@ -108,4 +108,11 @@ form {
 #containment_pp2,
 #containment_cp {
   width:60px;
+}
+
+table {
+  width: 100%;
+}
+td {
+  width:50%;
 }
