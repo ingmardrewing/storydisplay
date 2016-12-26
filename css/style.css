@@ -1,0 +1,111 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+form {
+  width: 100%;
+}
+
+#scene_type, input, textarea {
+  width: 50%;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+#background {
+  height: 80%;
+}
+
+#scenes {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 80%;
+}
+
+#story, #positive, #negative, #text, .act {
+  box-sizing: border-box;
+}
+
+.act {
+  position: relative;
+  display: table-cell;
+  width: 33%;
+  height: 100%;
+}
+
+.act + .act {
+  border-left: 1px solid lightgrey;
+}
+
+#positive .act::after {
+  color: lightgrey;
+  position: absolute;
+  content: attr(data-bg-text);
+  display: block;
+  font-size: 4vw;
+  line-height: 1;
+  bottom: 10%;
+  left: 10%;
+  -webkit-user-select: none; /* Chrome/Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+}
+
+#positive, #negative {
+  height:  50% ;
+  min-width: 100%;
+  border-bottom: 1px solid black;
+  display: table;
+}
+
+#text {
+  height: 20% ;
+}
+
+.scene {
+  width:60px;
+  height:40px;
+  border: 1px solid grey;
+  background-color: white;
+  background-image: url(../img/arrow.svg);
+  fill: red;
+}
+
+.scene svg {
+  fill: grey;
+  margin-top: -8px;
+}
+
+#canv{
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.containment {
+  position: absolute;
+  height: 80%;
+  top: 0;
+}
+
+#containment_act1 {
+  left: 0;
+  width: 33%;
+}
+
+#containment_act3 {
+  right: 0;
+  width: 33%;
+}
+
+#containment_pp1,
+#containment_pp2,
+#containment_cp {
+  width:60px;
+}

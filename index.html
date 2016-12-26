@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>TITLE</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="js/logic.js"></script>
+  </head>
+  <body>
+    <div id="background">
+      <div id="positive">
+        <div class="act act1" data-bg-text="Setup"></div>
+        <div class="act act2" data-bg-text="Confrontation"></div>
+        <div class="act act3" data-bg-text="Resolution"></div>
+      </div>
+      <div id="negative">
+        <div class="act act1"></div>
+        <div class="act act2"></div>
+        <div class="act act3"></div>
+      </div>
+      <div id="containment_act1" class="containment"></div>
+      <div id="containment_act3" class="containment"></div>
+      <div id="containment_pp1" class="containment"></div>
+      <div id="containment_pp2" class="containment"></div>
+      <div id="containment_cp" class="containment"></div>
+      <canvas id="canv"></canvas>
+    </div>
+    <div id="scenes">
+    </div>
+    <div id="text">
+      <form>
+        <div id="scene_type"></div>
+        <input type="hidden" id="scene_id" value="" />
+        <textarea id="scene_description"></textarea>
+      </form>
+    </div>
+  </body>
+</html>
