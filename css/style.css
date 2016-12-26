@@ -45,6 +45,7 @@ form {
   border-left: 1px solid lightgrey;
 }
 
+#negative .act2::after,
 #positive .act1::before ,
 #positive .act2::before ,
 #positive .act::after {
@@ -76,6 +77,14 @@ form {
 
 #positive .act2::before {
   content: attr(data-x-axis);
+  font-size: 1vw;
+  bottom: 2%;
+  left: 2%;
+  user-select: none;
+}
+
+#negative .act2::after {
+  content: attr(data-scene-count);
   font-size: 1vw;
   bottom: 2%;
   left: 2%;

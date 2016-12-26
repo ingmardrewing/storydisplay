@@ -258,6 +258,7 @@ jQuery(function(){
               update_text_display( {target:$s} );
               update_canvas();
               update_model_display();
+              update_scenes_count();
             }
           });
 
@@ -275,7 +276,33 @@ jQuery(function(){
               update_arrow( $s );
             });
             update_canvas();
+            update_scenes_count();
           });
+
+          function update_scenes_count(){
+            $('#negative .act2').attr('data-scene-count',get_scenes_per_act() );
+          }
+
+          function get_scenes_per_act(){
+            var upto_pp1 = get_number_of_scenes_up_to('plot_point_1');
+            var upto_pp2 = get_number_of_scenes_up_to('plot_point_2');
+            var all = scenes.length;
+            return 'Act 1: '
+              + upto_pp1 + ' scenes, Act 2: ' 
+              + (upto_pp2 - upto_pp1) + ' scenes, Act 3: ' 
+              + (all - upto_pp2) + ' scenes';
+          }
+
+          function get_number_of_scenes_up_to( id ){
+            var count = 0;
+            for ( var i=0; i < scenes.length; i++ ){
+              count++;
+              if( scenes[i].id == id ){
+                return count;
+              }
+            }
+            return count;
+          }
 
           adapt_size();
         }
