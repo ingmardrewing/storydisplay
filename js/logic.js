@@ -44,6 +44,12 @@ jQuery(function(){
         }
         
         function create_scene_div ( x, y, id, containment ) {
+          function on_drag (e, ui){
+            set_active( $(this));
+            update_arrow( $(this) );
+            update_canvas();
+          }
+
           return $( "<div class='scene'>")  
             .attr('id', id)
             .css({
@@ -63,12 +69,6 @@ jQuery(function(){
               set_active( $(this) );
             })
             .append( get_svg_arrow() );
-        }
-
-        function on_drag (e, ui){
-          set_active( $(this));
-          update_arrow( $(this) );
-          update_canvas();
         }
 
         function update_canvas () {
@@ -124,8 +124,6 @@ jQuery(function(){
           });
         }
 
-        
-
         function update_text_display( e ){
           var id;  
           if( $(e.target).hasClass('scene') ){
@@ -160,7 +158,6 @@ jQuery(function(){
           ctx.canvas.width = $('#background').width();
           ctx.canvas.height = $('#background').height();
 
-          // containments
           var w = $(window).width(),
               center = w / 2,
               oneThird = w / 3;
@@ -184,7 +181,6 @@ jQuery(function(){
         function percent(part, whole){
           return ( part / whole ) * 100 ;
         }
-
 
         function px(percent, max){
           if( typeof(percent) == 'string' ){
