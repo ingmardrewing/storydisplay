@@ -12,12 +12,14 @@ jQuery(function(){
         function get_scene_config(e){
           if( keyscenes.length > 0 ){
              var conf = keyscenes.shift();
+             console.log( conf);
+             conf.x = px( conf.x, $(window).width() );
              conf.y = e.pageY;
+             console.log( conf);
              return conf;
           }
-          var percentage_x = as_percentage( e.pageX - 30, $(window).width()) + '%';
           return {
-            x: percentage_x,
+            x: e.pageX,
             y: e.pageY,
             id: 'id_' + scenes.length,
             name: '',
@@ -41,8 +43,8 @@ jQuery(function(){
             .attr('id', id)
             .css({
               position: 'absolute',
-              left: x ,
-              top: y + 'px'
+              left: x + 'px',
+              top: y + 'px' 
             })
             .draggable({
               start: update_text_display,
@@ -60,7 +62,7 @@ jQuery(function(){
 
         function on_drag (e, ui){
           set_active( $(this));
-          update_scene( $(this) );
+          update_arrow( $(this) );
           update_canvas();
         }
 
@@ -87,7 +89,7 @@ jQuery(function(){
           return {x: x, y: y};
         }
 
-        function update_scene ( $scene ){
+        function update_arrow ( $scene ){
           var scene_y = $scene.position().top,
               scale = scene_y / $('#scenes').height(),
               sat = Math.abs( Math.floor ( (scale - 0.5) * 100) ),
@@ -95,6 +97,7 @@ jQuery(function(){
               degrees = 60 - Math.floor(120 - (120 * scale)),
               rot = 'rotate(' + degrees + 'deg)',
               $svg = $scene.find('svg');
+
           $svg.css({
             fill: hue,
             transform: rot
@@ -154,6 +157,12 @@ jQuery(function(){
           ctx.canvas.width = $('#background').width();
           ctx.canvas.height = $('#background').height();
 
+          $.each(scenes, function(i, v ){
+            console.log( 
+              v.$node.css('top'),
+              v.$node.css('left')  );
+          });
+
           // containments
           var w = $(window).width(),
               center = w / 2,
@@ -162,13 +171,16 @@ jQuery(function(){
           $('#containment_pp1').css({ left: ( oneThird - 30 ) + 'px' });
           $('#containment_pp2').css({ left: ( 2 * oneThird - 30 ) + 'px' });
         }
+
         function save_scene_description(){
+          convert_scene_positions_to_percentage();
           var scene_id = $('#text #scene_id').val();
           get_scenedata_by_id( scene_id ).description = $(this).val();
           update_model_display();
         }
 
         function update_model_display(){
+          convert_scene_positions_to_percentage();
           $('#text #model').val('');
           var txt = '';
           function addTxt(n, t){ 
@@ -177,14 +189,24 @@ jQuery(function(){
           for (var i=0; i< scenes.length; i++){
             txt += addTxt( 'Name', scenes[i].name || '' );
             txt += addTxt( 'Description', scenes[i].description || '' );
+            txt += addTxt( 'x', scenes[i].x || '' );
+            txt += addTxt( 'y', scenes[i].y || '' );
             txt += "\n";
           }
           console.log( txt );
           $('#text #model').val( txt );
         }
 
-        function as_percentage(part, whole){
+        function percent(part, whole){
           return ( part / whole ) * 100 ;
+        }
+
+
+        function px(percent, max){
+          if( typeof(percent) == 'string' ){
+            percent = parseFloat( percent );
+          }
+          return Math.floor( (percent / 100 ) * max );
         }
 
         function set_active( $s ){
@@ -195,8 +217,22 @@ jQuery(function(){
           $s.addClass('active');
         }
 
+        function convert_scene_positions_to_percentage(){
+          $.each(scenes, function(i, v){
+            var x_px = parseFloat( v.$node.position().left );
+            var y_px = parseFloat( v.$node.position().top );
+            var x_percent = percent( x_px, $('#scenes').width()  ) + "%";
+            var y_percent = percent( y_px, $('#scenes').height() ) + "%";
+            v.x = x_percent;
+            v.y = y_percent;
+            v.$node.css('top', y_percent);
+            v.$node.css('left', x_percent);
+          });
+        }
+
         function init(){
           $(window).resize( function(){
+            convert_scene_positions_to_percentage();
             adapt_size();
             update_canvas();
           });
@@ -210,7 +246,7 @@ jQuery(function(){
               var conf = get_scene_config(e),
                   $s = create_scene(conf);
               set_active( $s );
-              update_scene( $s );
+              update_arrow( $s );
               update_text_display( {target:$s} );
               update_canvas();
               update_model_display();
