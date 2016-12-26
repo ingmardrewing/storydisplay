@@ -2,27 +2,14 @@ jQuery(function(){
         var keyscenes = [
             { id:"inciting_incident", name:"Inciting Incident", x:'10%', containment: '#containment_act1'},
             { id:"resolve", name:"Resolve", x:'90%', containment: '#containment_act3'},
-            { id:"plot_point_1", name:"Plot Point 1", x:'33%', containment: '#containment_pp1'},
-            { id:"plot_point_2", name:"Plot Point 2", x:'66%', containment: '#containment_pp2'},
+            { id:"plot_point_1", name:"Plot Point 1", x:'32%', containment: '#containment_pp1'},
+            { id:"plot_point_2", name:"Plot Point 2", x:'64%', containment: '#containment_pp2'},
             { id:"central_point", name:"Central Point", x:'50%', containment: '#containment_cp'}
         ];
 
         var scenes = [];
 
-        $('#scenes').mousedown(function(e){
-          if( $(e.target).attr('id') == 'scenes' 
-              && $(e.currentTarget).attr('id') == 'scenes'){
-            var conf = get_scene_conf(e),
-                $s = create_scene(conf);
-            set_active( $s );
-            update_scene( $s );
-            update_text_display( {target:$s} );
-            update_canvas();
-            update_model_display();
-          }
-        });
-
-        function get_scene_conf(e){
+        function get_scene_config(e){
           if( keyscenes.length > 0 ){
              var conf = keyscenes.shift();
              conf.y = e.pageY;
@@ -72,6 +59,7 @@ jQuery(function(){
         }
 
         function on_drag (e, ui){
+          set_active( $(this));
           update_scene( $(this) );
           update_canvas();
         }
@@ -106,8 +94,8 @@ jQuery(function(){
               hue = 'hsl(' + (120 -( 120 * scale )) + ', 100%, 50%)',
               degrees = 60 - Math.floor(120 - (120 * scale)),
               rot = 'rotate(' + degrees + 'deg)',
-              svg = $scene.find('svg');
-          svg.css({
+              $svg = $scene.find('svg');
+          $svg.css({
             fill: hue,
             transform: rot
           });
@@ -141,12 +129,9 @@ jQuery(function(){
             id = $(e.target).closest('.scene').attr('id');
           }
           var scene_data = get_scenedata_by_id( id );
-          $("#text #scene_type")
-            .val( scene_data.name || '' );
-          $("#text #scene_id")
-            .val(id);
-          $("#text #scene_description")
-            .val( scene_data.description || '' );
+          $("#text #scene_type") .val( scene_data.name || '' );
+          $("#text #scene_id") .val(id);
+          $("#text #scene_description") .val( scene_data.description || '' );
         }
 
         function get_scenedata_by_id ( id ){
@@ -177,15 +162,6 @@ jQuery(function(){
           $('#containment_pp1').css({ left: ( oneThird - 30 ) + 'px' });
           $('#containment_pp2').css({ left: ( 2 * oneThird - 30 ) + 'px' });
         }
-
-        $(window).resize( function(){
-          adapt_size();
-          update_canvas();
-        });
-
-        $('#text #scene_description')
-          .keyup( save_scene_description );
-
         function save_scene_description(){
           var scene_id = $('#text #scene_id').val();
           get_scenedata_by_id( scene_id ).description = $(this).val();
@@ -207,16 +183,42 @@ jQuery(function(){
           $('#text #model').val( txt );
         }
 
-        adapt_size();
-
         function as_percentage(part, whole){
           return ( part / whole ) * 100 ;
         }
 
         function set_active( $s ){
+          console.log("set_active", $s );
           for ( var i=0; i < scenes.length; i++ ){
             scenes[i].$node.removeClass('active');
           }
-          $(this).addClass('active');
+          $s.addClass('active');
         }
+
+        function init(){
+          $(window).resize( function(){
+            adapt_size();
+            update_canvas();
+          });
+
+          $('#text #scene_description')
+            .keyup( save_scene_description );
+
+          $('#scenes').mousedown(function(e){
+            if( $(e.target).attr('id') == 'scenes' 
+                && $(e.currentTarget).attr('id') == 'scenes'){
+              var conf = get_scene_config(e),
+                  $s = create_scene(conf);
+              set_active( $s );
+              update_scene( $s );
+              update_text_display( {target:$s} );
+              update_canvas();
+              update_model_display();
+            }
+          });
+
+          adapt_size();
+        }
+
+        init();
   });

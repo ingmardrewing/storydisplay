@@ -116,3 +116,7 @@ table {
 td {
   width:50%;
 }
+
+.active {
+  border-width: 3px;
+}
