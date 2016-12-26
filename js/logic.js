@@ -15,10 +15,8 @@ jQuery(function(){
         function get_scene_config(e){
           if( keyscenes.length > 0 ){
              var conf = keyscenes.shift();
-             console.log( conf);
              conf.x = px( conf.x, $(window).width() );
              conf.y = e.pageY;
-             console.log( conf);
              return conf;
           }
           return {
@@ -161,12 +159,6 @@ jQuery(function(){
           ctx.canvas.width = $('#background').width();
           ctx.canvas.height = $('#background').height();
 
-          $.each(scenes, function(i, v ){
-            console.log( 
-              v.$node.css('top'),
-              v.$node.css('left')  );
-          });
-
           // containments
           var w = $(window).width(),
               center = w / 2,
@@ -201,7 +193,6 @@ jQuery(function(){
         }
 
         function set_active( $s ){
-          console.log("set_active", $s );
           for ( var i=0; i < scenes.length; i++ ){
             scenes[i].$node.removeClass('active');
           }
@@ -245,7 +236,6 @@ jQuery(function(){
         }
 
         function delete_scenes(){
-          console.log('delete_scenes', scenes);
           $.each(scenes, function(i,v){
             v.$node.remove();
           });
@@ -254,7 +244,6 @@ jQuery(function(){
         }
 
         function init(){
-          
           $(window).resize( function(){
             convert_scene_positions_to_percentage();
             adapt_size();
@@ -280,13 +269,14 @@ jQuery(function(){
           $('#reconstruct').click(function(e){
             delete_scenes();
             keyscenes = get_keyscenes();
-            scenes =  JSON.parse( $('#text #model').val()  );
-            $.each(scenes, function(i,v){
+            var read_scenes =  JSON.parse( $('#text #model').val() );
+            $.each(read_scenes, function(i,v){
               keyscenes.shift();
+            });
+            $.each(read_scenes, function(i,v){
               v.x = px( v.x, $('#scenes').width() );
               v.y = px( v.y, $('#scenes').height() );
               var $s = create_scene( v );
-              v.$node = $s;
               update_arrow( $s );
             });
             update_canvas();
