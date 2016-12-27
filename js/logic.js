@@ -5,7 +5,7 @@ jQuery(function(){
     function get_keyscenes (){
       return [
         { id:"inciting_incident", name:"Inciting Incident", x:'10%', containment: '#containment_act1'},
-        { id:"resolve", name:"Climax", x:'90%', containment: '#containment_act3'},
+        { id:"climax", name:"Climax", x:'90%', containment: '#containment_act3'},
         { id:"plot_point_1", name:"Plot Point 1", x:'25%', containment: '#containment_pp1'},
         { id:"plot_point_2", name:"Plot Point 2", x:'75%', containment: '#containment_pp2'},
         { id:"central_point", name:"Central Point", x:'50%', containment: '#containment_cp'}
@@ -14,10 +14,15 @@ jQuery(function(){
 
     function get_scene_config(e){
       if( keyscenes.length > 0 ){
-          var conf = keyscenes.shift();
+        var conf = keyscenes.shift();
+        if( conf.id == 'inciting_incident' || conf.id == 'climax' ){
           conf.x = px( conf.x, $(window).width() );
-          conf.y = e.pageY;
-          return conf;
+        }
+        else{
+          conf.x = $( conf.containment ).position().left;
+        }
+        conf.y = e.pageY;
+        return conf;
       }
       return {
         x: e.pageX,
