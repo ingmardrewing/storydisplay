@@ -159,3 +159,16 @@ td {
 .active {
   border-width: 3px;
 }
+
+.label {
+  display: inline-block;
+  position:absolute;
+  top: 48px;
+  left: 0;
+  color: grey;
+    text-shadow:
+   -1px -1px 0 #FFFFFF,  
+    1px -1px 0 #FFFFFF,
+    -1px 1px 0 #FFFFFF,
+     1px 1px 0 #FFFFFF;
+}
