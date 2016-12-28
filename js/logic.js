@@ -98,21 +98,26 @@ jQuery(function(){
           }
           return 0;
         });
-        ctx.beginPath();
-        for (var i=0; i< scenes.length; i++){
-          var coords = get_coords(scenes[i].$node);
-          if( i == 0 ) {
-            ctx.moveTo( coords.x, coords.y );
-          }
-          else {
-            ctx.lineTo( coords.x, coords.y );
-          }
-        }
-        ctx.lineWidth = 5;
-        ctx.strokeStyle = '#999999';
-        ctx.stroke();
-      }
+        draw_poly_line( ctx, 7, '#FFFFFF' );
+        draw_poly_line( ctx, 5, '#999999' );
+      } 
     }
+
+    function draw_poly_line( context, width, color ){
+      context.beginPath();
+      for (var i=0; i< scenes.length; i++){
+        var coords = get_coords(scenes[i].$node);
+        if( i == 0 ) {
+          context.moveTo( coords.x, coords.y );
+        }
+        else {
+          context.lineTo( coords.x, coords.y );
+        }
+      }
+      context.lineWidth = width;
+      context.strokeStyle = color;
+      context.stroke();
+   }
 
     function get_coords( $node ){
       var x = Math.floor( $node.position().left + $node.width() / 2 ) ,
